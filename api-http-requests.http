@@ -1,11 +1,7 @@
 ### Variables de entorno
 @baseUrl = http://localhost:8080
-@subscriptionKey = tu-subscription-key-aqui
+@subscriptionKey = XXXABC1234
 @contentType = application/json
-
-### ============================================
-### POOL ENDPOINTS
-### ============================================
 
 ### 1. Pool Find
 POST {{baseUrl}}/pool-find
@@ -34,4 +30,24 @@ Subscription-Key: {{subscriptionKey}}
     "POOL:2e66b934-c589-384f-abcc-97f6120e4afa",
     "POOL:0c6fd997-c271-3ac8-abd9-ebab55212eda"
   ]
+}
+
+### 3. Pool Find - Without header Subscription-Key
+POST {{baseUrl}}/pool-find
+Content-Type: {{contentType}}
+
+{
+  "dcsPoolIds": [
+    "POOL:2e66b934-c589-384f-abcc-97f6120e4afa",
+    "POOL:0c6fd997-c271-3ac8-abd9-ebab55212eda"
+  ]
+}
+
+### 4. Pool Find - Without dcsPoolIds
+POST {{baseUrl}}/pool-find
+Content-Type: {{contentType}}
+Subscription-Key: {{subscriptionKey}}
+
+{
+  "dcsPoolIds": []
 }

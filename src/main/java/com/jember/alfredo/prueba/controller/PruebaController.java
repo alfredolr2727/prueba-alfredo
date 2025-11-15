@@ -6,13 +6,16 @@ import com.jember.alfredo.prueba.dto.PoolSearchRequest;
 import com.jember.alfredo.prueba.dto.PoolSearchResponse;
 import com.jember.alfredo.prueba.service.PoolService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /** POI Data API Controller Provides information about e-charging points */
 @RestController
 @RequestMapping
+@Validated
 public class PruebaController {
 
   private final PoolService poolService;
@@ -30,7 +33,7 @@ public class PruebaController {
    */
   @PostMapping(value = "/pool-find", consumes = "application/json", produces = "application/json")
   public ResponseEntity<List<PoolSearchResponse>> poolSearchAndFilter(
-      @RequestHeader("Subscription-Key") String subscriptionKey,
+      @NotNull @RequestHeader("Subscription-Key") String subscriptionKey,
       @Valid @RequestBody PoolSearchRequest request) {
 
     List<PoolSearchResponse> results = poolService.searchPools(request);

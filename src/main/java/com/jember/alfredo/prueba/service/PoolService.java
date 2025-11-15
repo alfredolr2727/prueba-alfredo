@@ -5,7 +5,9 @@ import com.jember.alfredo.prueba.dto.PoolSearchResponse;
 import com.jember.alfredo.prueba.mapper.PoolMapper;
 import com.jember.alfredo.prueba.repository.PoolRepository;
 import com.jember.alfredo.prueba.repository.entity.PoolEntity;
+import com.jember.alfredo.prueba.repository.query.PoolSpecification;
 import java.util.List;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,13 +24,9 @@ public class PoolService {
 
   @Transactional(readOnly = true)
   public List<PoolSearchResponse> searchPools(PoolSearchRequest request) {
-    List<PoolEntity> poolEntities;
 
-    if (!request.dcsPoolIds().isEmpty()) {
-      poolEntities = poolRepository.findByDcsPoolIdIn(request.dcsPoolIds());
-    } else {
-      poolEntities = poolRepository.findAll();
-    }
+    Specification<PoolEntity> spec = PoolSpecification.withFilters(request);
+    List<PoolEntity> poolEntities = poolRepository.findAll(spec);
 
     return poolEntities.stream().map(poolMapper::toDto).toList();
   }
