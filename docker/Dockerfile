@@ -1,20 +1,14 @@
-# -------- BUILD --------
-FROM maven:3.9.6-eclipse-temurin-21 AS build
+FROM maven:3.9.6-eclipse-temurin-21 AS builder
 WORKDIR /app
 
-# Copiar pom y luego src (mejor para cache)
 COPY pom.xml .
-RUN mvn -q -e -B dependency:go-offline
-
 COPY src ./src
-RUN mvn -q -e -B clean package -DskipTests
 
-# -------- RUNTIME --------
-FROM eclipse-temurin:21-jdk
+RUN mvn -q -B clean package -DskipTests
+
+FROM eclipse-temurin:21-jre
 WORKDIR /app
-
-COPY --from=build /app/target/*.jar app.jar
+COPY --from=builder /app/target/*.jar app.jar
 
 EXPOSE 8080
-
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]
