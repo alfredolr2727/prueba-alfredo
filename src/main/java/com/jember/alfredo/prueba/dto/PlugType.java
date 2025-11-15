@@ -1,6 +1,6 @@
 package com.jember.alfredo.prueba.dto;
 
-enum PlugType {
+public enum PlugType {
   CHADEMO,
   UNKNOWN
 }

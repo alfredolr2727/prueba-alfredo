@@ -4,6 +4,7 @@ import com.jember.alfredo.prueba.dto.ChargePointDynStatusRequest;
 import com.jember.alfredo.prueba.dto.ChargePointDynStatusResponseList;
 import com.jember.alfredo.prueba.dto.PoolSearchRequest;
 import com.jember.alfredo.prueba.dto.PoolSearchResponse;
+import com.jember.alfredo.prueba.service.PoolService;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping
 public class PruebaController {
+
+  private final PoolService poolService;
+
+  public PruebaController(PoolService poolService) {
+    this.poolService = poolService;
+  }
 
   /**
    * POST /pool-find Returns a response object that contains a list of pools.
@@ -26,8 +33,8 @@ public class PruebaController {
       @RequestHeader("Subscription-Key") String subscriptionKey,
       @Valid @RequestBody PoolSearchRequest request) {
 
-    // TODO
-    throw new UnsupportedOperationException("Pending implementation");
+    List<PoolSearchResponse> results = poolService.searchPools(request);
+    return ResponseEntity.ok(results);
   }
 
   /**

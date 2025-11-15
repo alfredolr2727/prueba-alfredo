@@ -1,6 +1,6 @@
 package com.jember.alfredo.prueba.dto;
 
-record PoolLocation(
+public record PoolLocation(
     String city,
     String countryCode,
     String houseNumber,

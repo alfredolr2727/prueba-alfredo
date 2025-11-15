@@ -1,6 +1,6 @@
 package com.jember.alfredo.prueba.dto;
 
-enum LocationType {
+public enum LocationType {
   ENTRY,
   UNKNOWN
 }

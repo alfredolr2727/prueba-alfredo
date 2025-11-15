@@ -1,6 +1,6 @@
 package com.jember.alfredo.prueba.dto;
 
-enum AccessType {
+public enum AccessType {
   PRIVATE,
   PUBLIC
 }

@@ -1,6 +1,6 @@
 package com.jember.alfredo.prueba.dto;
 
-enum PoolLocationType {
+public enum PoolLocationType {
   ONSTREET,
   UNKNOWN
 }

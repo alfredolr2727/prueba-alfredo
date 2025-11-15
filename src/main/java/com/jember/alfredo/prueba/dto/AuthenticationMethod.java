@@ -1,6 +1,6 @@
 package com.jember.alfredo.prueba.dto;
 
-enum AuthenticationMethod {
+public enum AuthenticationMethod {
   REMOTE,
   UNKNOWN
 }
