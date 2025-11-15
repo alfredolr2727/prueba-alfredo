@@ -22,7 +22,7 @@ public class DataLoader implements CommandLineRunner {
 
   @Override
   public void run(String... args) {
-    String timestamp = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME);
+    String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
     List<ChargePointDynStatusResponse> chargePoints =
         List.of(

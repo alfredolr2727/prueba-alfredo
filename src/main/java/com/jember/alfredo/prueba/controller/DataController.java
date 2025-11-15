@@ -5,10 +5,13 @@ import com.jember.alfredo.prueba.dto.ChargePointDynStatusRequest;
 import com.jember.alfredo.prueba.dto.ChargePointDynStatusResponseList;
 import com.jember.alfredo.prueba.dto.PoolSearchRequest;
 import com.jember.alfredo.prueba.dto.PoolSearchResponse;
+import com.jember.alfredo.prueba.dto.ResponseWrapper;
+import com.jember.alfredo.prueba.service.ChargePointService;
 import com.jember.alfredo.prueba.service.PoolService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -17,15 +20,14 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping
 @Validated
-public class PoolController {
+@RequiredArgsConstructor
+public class DataController {
 
   private final PoolService poolService;
 
-  private static final String FAKE_VALID_KEY = "1234ABCD";
+  private final ChargePointService chargePointService;
 
-  public PoolController(PoolService poolService) {
-    this.poolService = poolService;
-  }
+  private static final String FAKE_VALID_KEY = "1234ABCD";
 
   /**
    * POST /pool-find Returns a response object that contains a list of pools.
@@ -40,10 +42,8 @@ public class PoolController {
       @RequestHeader(value = "Content-Type") String contentType,
       @Valid @RequestBody PoolSearchRequest request) {
 
-    //Fake Validation
-    if (!subscriptionKey.equals(FAKE_VALID_KEY)) {
-      throw new ForbiddenException("You are not allowed to use this endpoint!");
-    }
+    // Fake Validation
+    validateSubscriptionKey(subscriptionKey);
 
     List<PoolSearchResponse> results = poolService.searchPools(request);
     return ResponseEntity.ok(results);
@@ -60,11 +60,22 @@ public class PoolController {
       value = "/availability/charge-points/",
       consumes = "application/json",
       produces = "application/json")
-  public ResponseEntity<ChargePointDynStatusResponseList> getDynamicPoiData(
+  public ResponseEntity<ResponseWrapper> getDynamicPoiData(
       @RequestHeader("Subscription-Key") String subscriptionKey,
       @Valid @RequestBody ChargePointDynStatusRequest request) {
 
-    // TODO
-    throw new UnsupportedOperationException("Pending implementation");
+    // Fake Validation
+    validateSubscriptionKey(subscriptionKey);
+
+    ChargePointDynStatusResponseList responseList =
+        chargePointService.getChargePointsStatus(request.chargePointIds());
+
+    return ResponseEntity.ok(new ResponseWrapper(responseList));
+  }
+
+  private void validateSubscriptionKey(String subscriptionKey) {
+    if (!subscriptionKey.equals(FAKE_VALID_KEY)) {
+      throw new ForbiddenException("You are not allowed to use this endpoint!");
+    }
   }
 }
