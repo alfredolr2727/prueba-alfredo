@@ -1,5 +1,6 @@
 package com.jember.alfredo.prueba.controller;
 
+import com.jember.alfredo.prueba.controller.exception.ForbiddenException;
 import com.jember.alfredo.prueba.dto.ChargePointDynStatusRequest;
 import com.jember.alfredo.prueba.dto.ChargePointDynStatusResponseList;
 import com.jember.alfredo.prueba.dto.PoolSearchRequest;
@@ -16,11 +17,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping
 @Validated
-public class PruebaController {
+public class PoolController {
 
   private final PoolService poolService;
 
-  public PruebaController(PoolService poolService) {
+  private static final String FAKE_VALID_KEY = "1234ABCD";
+
+  public PoolController(PoolService poolService) {
     this.poolService = poolService;
   }
 
@@ -34,7 +37,13 @@ public class PruebaController {
   @PostMapping(value = "/pool-find", consumes = "application/json", produces = "application/json")
   public ResponseEntity<List<PoolSearchResponse>> poolSearchAndFilter(
       @NotNull @RequestHeader("Subscription-Key") String subscriptionKey,
+      @RequestHeader(value = "Content-Type") String contentType,
       @Valid @RequestBody PoolSearchRequest request) {
+
+    //Fake Validation
+    if (!subscriptionKey.equals(FAKE_VALID_KEY)) {
+      throw new ForbiddenException("You are not allowed to use this endpoint!");
+    }
 
     List<PoolSearchResponse> results = poolService.searchPools(request);
     return ResponseEntity.ok(results);

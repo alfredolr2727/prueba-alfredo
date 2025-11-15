@@ -1,6 +1,6 @@
 ### Variables de entorno
 @baseUrl = http://localhost:8080
-@subscriptionKey = XXXABC1234
+@subscriptionKey = 1234ABCD
 @contentType = application/json
 
 ### 1. Pool Find
