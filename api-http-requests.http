@@ -1,0 +1,37 @@
+### Variables de entorno
+@baseUrl = http://localhost:8080
+@subscriptionKey = tu-subscription-key-aqui
+@contentType = application/json
+
+### ============================================
+### POOL ENDPOINTS
+### ============================================
+
+### 1. Pool Find
+POST {{baseUrl}}/pool-find
+Content-Type: {{contentType}}
+Subscription-Key: {{subscriptionKey}}
+
+{
+  "dcsPoolIds": [
+    "POOL:2e66b934-c589-384f-abcc-97f6120e4afa",
+    "POOL:0c6fd997-c271-3ac8-abd9-ebab55212eda"
+  ],
+  "filterCriteria": {
+    "authenticationMethods": [
+      "REMOTE"
+    ]
+  }
+}
+
+### 2. Pool Find - Sin filtros
+POST {{baseUrl}}/pool-find
+Content-Type: {{contentType}}
+Subscription-Key: {{subscriptionKey}}
+
+{
+  "dcsPoolIds": [
+    "POOL:2e66b934-c589-384f-abcc-97f6120e4afa",
+    "POOL:0c6fd997-c271-3ac8-abd9-ebab55212eda"
+  ]
+}
