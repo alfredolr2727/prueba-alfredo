@@ -2,7 +2,7 @@ package com.jember.alfredo.prueba.dto;
 
 import jakarta.validation.constraints.NotNull;
 
-record ChargePointDynStatusResponse(
+public record ChargePointDynStatusResponse(
     @NotNull String chargePointID,
     @NotNull OperationalState OperationalState,
     @NotNull String timestamp) {}

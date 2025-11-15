@@ -1,6 +1,6 @@
 package com.jember.alfredo.prueba.dto;
 
-enum OperationalState {
+public enum OperationalState {
   AVAILABLE,
   CHARGING,
   UNKNOWN
