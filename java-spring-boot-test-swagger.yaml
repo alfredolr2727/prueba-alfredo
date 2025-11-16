@@ -1,0 +1,615 @@
+openapi: 3.0.0
+info:
+  title: POI Data
+  version: 1.0.0
+  description: This API provides information about e-charging points.
+paths:
+  /pool-find:
+    post:
+      summary: Returns a response object that contains a list of pools.
+      description: 'This endpoint allows to retrieve pool details given a set of Pool IDs. You can use predefined filter criteria.'
+      operationId: poolSearchAndFilter
+      requestBody:
+        description: The search request body to retrieve pools with the required details.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PoolSearchRequest'
+            examples:
+              With all filters:
+                value:
+                  dcsPoolIds:
+                    - 'POOL:2e66b934-c589-384f-abcc-97f6120e4afa'
+                    - 'POOL:0c6fd997-c271-3ac8-abd9-ebab55212eda'
+                  filterCriteria:
+                    authenticationMethods:
+                      - REMOTE
+                      - RFID
+              Without filter:
+                value:
+                  dcsPoolIds:
+                    - 'POOL:2e66b934-c589-384f-abcc-97f6120e4afa'
+                    - 'POOL:0c6fd997-c271-3ac8-abd9-ebab55212eda'
+        required: true
+      responses:
+        '200':
+          description: The pool list has been successfully returned for the given IDs.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PoolSearchResponse'
+              examples:
+                Response Example - One Pool:
+                  value:
+                    - dcsPoolId: 'POOL:001232cf-8608-3939-8e70-7e3beec16eec'
+                      incomingPoolId: DEESWS0008
+                      open24h: true
+                      access: PUBLIC
+                      poolLocationType: ONSTREET
+                      poolLocations:
+                        - city: München
+                          countryCode: DE
+                          houseNumber: 3a
+                          state: Bayern
+                          street: Hauptstraße
+                          type: ENTRY
+                          zipCode: '81678'
+                          coordinates:
+                            latitude: 49.138744
+                            longitude: 11.87634
+                      chargingStations:
+                        - chargePoints:
+                            - connectors:
+                                - plugType: CHADEMO
+                                  powerLevel: 22
+                              dcsCpId: 'CHARGE_POINT:200a4e22-b996-3cd0-8505-7cf6f5690714'
+                              incomingCpId: '+49*809*010*150850'
+                              dynamicInfoAvailable: true
+                              isonormedID: true
+                          dcsCsId: 'CHARGING_STATION:5e296c55-fe2e-313a-bf19-08f5bf35d6b6'
+                          incomingCsId: SL01577
+                          chargingStationAuthMethods:
+                            - REMOTE
+        '400':
+          description: 'The service cannot or will not process the request due to something that is perceived to be a client error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                MinPowerlevel Invalid:
+                  value:
+                    - status: 400
+                      detail: Authentication method must be on 
+        '401':
+          description: The request has not been applied because it lacks valid authentication credentials for the target resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                Unauthorized:
+                  value:
+                    - status: 401
+                      detail: There are no valid authentication credentials present.
+        '403':
+          description: The server understood the request but refuses to authorize it.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                Forbidden:
+                  value:
+                    - status: 403
+                      detail: 'You are not allowed to use this endpoint!'
+        '503':
+          description: This service or another required system is currently unable to handle the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                Service Unavailable:
+                  value:
+                    - status: 503
+                      detail: This service or another required system is currently unable to handle the request.
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Content-Type
+          description: application/json
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Subscription-Key
+          description: '[one subscription key]'
+          required: true
+      tags:
+        - pois
+  /availability/charge-points/:
+    post:
+      summary: Delivers dynamic data for a set of charge points
+      requestBody:
+        description: The list of charge points to get the dynamic data for.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChargePointDynStatusRequest'
+            x-examples:
+              Example:
+                chargePointIds:
+                  - 'CHARGE_POINT:948ebcb1-59da-32ed-a2c4-f45b4a515a35'
+                  - 'CHARGE_POINT:200a4e22-b996-3cd0-8505-7cf6f5690714'
+        required: true
+      responses:
+        '200':
+          description: Successful operation. Returns dynamic data for a list of charge points.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChargePointDynStatusResponseList'
+              examples:
+                Example:
+                  value:
+                    ChargePointDynStatusResponseList:
+                      ChargePointDynStatusResponses:
+                        - chargePointID: 'CHARGE_POINT:948ebcb1-59da-32ed-a2c4-f45b4a515a35'
+                          OperationalState: CHARGING
+                          timestamp: '2020-04-08 06:29:04'
+                        - chargePointID: 'CHARGE_POINT:3ad0a06c-8dae-3451-8acd-267460a9afee'
+                          OperationalState: AVAILABLE
+                          timestamp: '2020-04-08 06:29:04'
+                      ChargePointDynStatusResponsestatus:
+                        code: 1000
+                        description: "InvalidRequest - Some of the requested ChargePoint-Ids are not valid"
+                        invalidChargePointIDs:
+                          - 'CHARGE_POINT:200a4e22-b996-3cd0-8505-7cf6f5690714'
+        '400':
+          description: The request has not been applied, because there were to many charge points requested.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                Bad Request:
+                  value:
+                    - status: 400
+                      detail: There are too many charge point requested.
+        '401':
+          description: The request has not been applied because it lacks valid authentication credentials for the target resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                Unauthorized:
+                  value:
+                    - status: 401
+                      detail: There are no valid authentication credentials present.
+        '404':
+          description: The resource you were trying to reach is not found.
+          content:
+            applicaton/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                NotFound:
+                  value:
+                    - status: 404
+                      detail: The requested entity was not found!
+      operationId: getDynamicPoiData
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Content-Type
+          description: application/json
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Subscription-Key
+          description: '[one subscription key]'
+          required: true
+      tags:
+        - poi-availability
+components:
+  schemas:
+    PoolSearchRequest:
+      title: Pool Search Request
+      description: The PoolSearchRequest contains all required dcsPoolIds and the filter criteria for the search.
+      allOf:
+        - type: object
+          properties:
+            dcsPoolIds:
+              $ref: '#/components/schemas/PoollIds'
+            filterCriteria:
+              $ref: '#/components/schemas/PoolFilter'
+      required:
+        - dcsPoolIds
+    PoollIds:
+      description: 'A list of pool IDs.'
+      example:
+        - 'POOL:abcd1234-a1b2-123a-456b-1234ab567abc'
+      type: array
+      items:
+        type: string
+    PoolFilter:
+      type: object
+      description: Criteria used to filter charge points of interest.
+      x-examples:
+        Example:
+          authenticationMethods:
+            - REMOTE
+      properties:
+        authenticationMethods:
+          type: array
+          description: The list of charging station authentication-methods.
+          example:
+            - RFID
+          items:
+            enum:
+              - REMOTE
+              - UNKNOWN
+            type: string
+    PoolSearchResponse:
+      type: object
+      title: Pool Response
+      description: Hierarchical level that groups charging stations which in turns group charge points.
+      x-examples:
+        Example:
+          dcsPoolId: 'POOL:001232cf-8608-3939-8e70-7e3beec16eec'
+          incomingPoolId: DEESWS0008
+          open24h: true
+          access: PUBLIC
+          poolLocationType: ONSTREET
+          poolLocations:
+            - city: München
+              countryCode: DE
+              houseNumber: 3a
+              state: Bayern
+              street: Hauptstraße
+              type: ENTRY
+              zipCode: '81678'
+              coordinates:
+                latitude: 49.138744
+                longitude: 11.87634
+          chargingStations:
+            - chargePoints:
+                - connectors:
+                    - plugType: CHADEMO
+                      powerLevel: 22
+                  dcsCpId: 'CHARGE_POINT:200a4e22-b996-3cd0-8505-7cf6f5690714'
+                  incomingCpId: '+49*809*010*150850'
+                  dynamicInfoAvailable: true
+                  isonormedID: true
+              dcsCsId: 'CHARGING_STATION:5e296c55-fe2e-313a-bf19-08f5bf35d6b6'
+              incomingCsId: SL01577
+              chargingStationAuthMethods:
+                - REMOTE
+      properties:
+        dcsPoolId:
+          type: string
+          example: 'POOL:001232cf-8608-3939-8e70-7e3beec16eec'
+        incomingPoolId:
+          type: string
+          example: DEESWS0008
+        open24h:
+          type: boolean
+          example: true
+        access:
+          type: string
+          enum:
+            - PRIVATE
+            - PUBLIC
+          description: >
+            Pool Access Types:
+             * `PRIVATE` - The pool can only be accessed through private access.
+             * `PUBLIC` - The pool is public/free to access.
+          example: PUBLIC
+        poolLocationType:
+          type: string
+          enum:
+            - ONSTREET
+            - UNKNOWN
+          example: ONSTREET
+        poolLocations:
+          type: array
+          items:
+            $ref: '#/components/schemas/PoolLocation'
+        chargingStations:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChargingStation'
+    PoolLocation:
+      type: object
+      description: geographical location information of a pool.
+      properties:
+        city:
+          type: string
+          example: München
+        countryCode:
+          type: string
+          example: DE
+          description: The ISO 3166 Alpha-2 code (two-letter country code) of this market (denoted by the country).
+        houseNumber:
+          type: string
+          example: 3a
+        state:
+          type: string
+          example: Bayern
+        street:
+          type: string
+          example: Hauptstraße
+        type:
+          type: string
+          enum:
+            - ENTRY
+            - UNKNOWN
+          example: ENTRY
+        zipCode:
+          type: string
+          example: '81678'
+        coordinates:
+          $ref: '#/components/schemas/WGS84Point'
+      x-examples:
+        Example:
+          city: München
+          countryCode: DE
+          houseNumber: 3a
+          state: Bayern
+          street: Hauptstraße
+          type: ENTRY
+          zipCode: '81678'
+          coordinates:
+            latitude: 49.138744
+            longitude: 11.87634
+    ChargingStation:
+      type: object
+      description: An element in an infrastructure that groups one or many charge points.
+      x-examples:
+        Example:
+          chargePoints:
+            - connectors:
+                - plugType: CHADEMO
+                  powerLevel: 22
+              dcsCpId: 'CHARGE_POINT:200a4e22-b996-3cd0-8505-7cf6f5690714'
+              incomingCpId: '+49*809*010*150850'
+              dynamicInfoAvailable: true
+              isonormedID: true
+          dcsCsId: 'CHARGING_STATION:5e296c55-fe2e-313a-bf19-08f5bf35d6b6'
+          incomingCsId: SL01577
+          chargingStationAuthMethods:
+            - REMOTE
+      properties:
+        dcsCsId:
+          type: string
+          example: 'CHARGING_STATION:5e296c55-fe2e-313a-bf19-08f5bf35d6b6'
+        incomingCsId:
+          type: string
+          example: SL01577
+        chargingStationAuthMethods:
+          type: array
+          example:
+            - REMOTE
+          items:
+            enum:
+              - REMOTE
+              - UNKNOWN
+            type: string
+        chargePoints:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChargePointDetails'
+    ChargePointDetails:
+      type: object
+      description: An element in an infrastructure that supplies electric energy for the recharging of electric vehicles.
+      properties:
+        dcsCpId:
+          type: string
+          example: 'CHARGE_POINT:00ec055f-9665-35c5-8657-34601496270e'
+        incomingCpId:
+          type: string
+          example: 'NO*B8*EEF32'
+        dynamicInfoAvailable:
+          type: boolean
+          example: true
+        isonormedID:
+          type: boolean
+          example: true
+        connectors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Connector'
+      x-examples:
+        Example:
+          connectors:
+            - plugType: CHADEMO
+              powerLevel: 50
+          dcsCpId: 'CHARGE_POINT:4db242ef-31ca-39c2-96ea-9124a2be493c'
+          incomingCpId: 18AS81POINT1
+          dynamicInfoAvailable: true
+          isonormedID: true
+    Connector:
+      type: object
+      description: 'the physical connection infrastructure of a charge point.'
+      properties:
+        plugType:
+          type: string
+          enum:
+            - CHADEMO
+            - UNKNOWN
+          example: CHADEMO
+        powerLevel:
+          type: integer
+          format: int32
+          minimum: 0
+          example: 350
+      x-examples:
+        Example:
+          plugType: CHADEMO
+          powerLevel: 350
+    WGS84Point:
+      type: object
+      description: "An Earth-centered, Earth-fixed terrestrial reference system."
+      properties:
+        latitude:
+          type: number
+          format: double
+          minimum: -90
+          maximum: 90
+          example: 49.112302
+        longitude:
+          type: number
+          format: double
+          minimum: -180
+          maximum: 180
+          example: 12.076342
+      x-examples:
+        Example:
+          latitude: 49.112302
+          longitude: 12.076342
+    Error:
+      title: Error
+      type: object
+      description: An object to wrap errors in a common format.
+      properties:
+        status:
+          type: string
+          description: 'The HTTP status code.'
+        detail:
+          type: string
+          description: 'A short, human-readable summary of the problem.'
+      x-examples:
+        '400':
+          status: 400
+          detail: The longitude and latitude are invalid.
+    ErrorResponse:
+      title: Generic Error Response
+      type: object
+      description: Contains detailed error information.
+      properties:
+        errors:
+          type: array
+          description: A list of one or multiple error objects.
+          items:
+            $ref: '#/components/schemas/Error'
+      x-examples:
+        Error Example:
+          - status: 503
+            detail: This service is unable to handle the request.
+          - status: 400
+            detail: The longitude and latitude are invalid.
+    ChargePointDynStatusRequest:
+      title: ChargePointDynStatusRequest
+      description: List of requests for dynamic data
+      allOf:
+        - type: object
+          properties:
+            chargePointIds:
+              $ref: '#/components/schemas/chargePointIds'
+      x-examples:
+        Example:
+          chargePointIds:
+            - 'CHARGE_POINT:948ebcb1-59da-32ed-a2c4-f45b4a515a35'
+            - 'CHARGE_POINT:200a4e22-b996-3cd0-8505-7cf6f5690714'
+    chargePointIds:
+      description: 'A list of charge point IDs.'
+      example:
+        - 'CHARGE_POINT:abcd1234-a1b2-123a-456b-1234ab567abc'
+      type: array
+      items:
+        type: string
+    ChargePointDynStatusResponseList:
+      title: ChargePointDynStatusResponseList
+      type: object
+      description: Response List of the requestes dynamic data
+      x-examples:
+        Example:
+          ChargePointDynStatusResponses:
+            - chargePointID: 'CHARGE_POINT:948ebcb1-59da-32ed-a2c4-f45b4a515a35'
+              OperationalState: CHARGING
+              timestamp: '2020-04-08 06:29:04'
+            - chargePointID: 'CHARGE_POINT:3ad0a06c-8dae-3451-8acd-267460a9afee'
+              OperationalState: AVAILABLE
+              timestamp: '2020-04-08 06:29:04'
+          ChargePointDynStatusResponsestatus:
+            code: 1000
+            description: "InvalidRequest - Some of the requested ChargePoint-Ids are not valid"
+            invalidChargePointIDs:
+              - 'CHARGE_POINT:200a4e22-b996-3cd0-8505-7cf6f5690714'
+      properties:
+        ChargePointDynStatusResponses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChargePointDynStatusResponse'
+        ChargePointDynStatusResponsestatus:
+          $ref: '#/components/schemas/ChargePointDynStatusResponsestatus'
+      required:
+        - ChargePointDynStatusResponsestatus
+    ChargePointDynStatusResponse:
+      title: ChargePointDynStatusResponse
+      type: object
+      description: Response model for the dynamic data
+      x-examples:
+        Example:
+          chargePointID: 'CHARGE_POINT:948ebcb1-59da-32ed-a2c4-f45b4a515a35'
+          OperationalState: CHARGING
+          timestamp: '2020-04-08 06:29:04'
+      properties:
+        chargePointID:
+          type: string
+          example: 'CHARGE_POINT:948ebcb1-59da-32ed-a2c4-f45b4a515a35'
+        OperationalState:
+          $ref: '#/components/schemas/OperationalState'
+        timestamp:
+          type: string
+          example: '2020-04-08 06:29:04'
+      required:
+        - chargePointID
+        - OperationalState
+        - timestamp
+    OperationalState:
+      title: OperationalState
+      type: string
+      description: The operational state of a charge point
+      enum:
+        - AVAILABLE
+        - CHARGING
+        - UNKNOWN
+      example: CHARGING
+    ChargePointDynStatusResponsestatus:
+      title: ChargePointDynStatusResponsestatus
+      type: object
+      description: Contains the status for the given request in cases of success and errors
+      x-examples:
+        Example:
+          code: 1000
+          description: "InvalidRequest - Some of the requested ChargePoint-Ids are not valid"
+          invalidChargePointIDs:
+            - 'CHARGE_POINT:948ebcb1-59da-32ed-a2c4-f45b4a515a35'
+            - 'CHARGE_POINT:3ad0a06c-8dae-3451-8acd-267460a9afee'
+      properties:
+        status:
+          type: integer
+          example: 1000
+        description:
+          type: string
+          example: "InvalidRequest - Some of the requested ChargePoint-Ids are not valid"
+        invalidChargePointIDs:
+          type: array
+          items:
+            type: string
+          example:
+            - 'CHARGE_POINT:948ebcb1-59da-32ed-a2c4-f45b4a515a35'
+            - 'CHARGE_POINT:3ad0a06c-8dae-3451-8acd-267460a9afee'
+      required:
+        - description
+tags:
+  - name: pois
+    description: Everything about POIs.
