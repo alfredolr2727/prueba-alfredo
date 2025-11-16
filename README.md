@@ -65,6 +65,32 @@ http://localhost:8080
 
 ## 📚 API Documentation
 
+### Collections and Example Requests
+
+The project includes ready-to-use API request collections in the **`collections/`** directory:
+
+#### 📦 Postman Collection
+
+A complete Postman collection is available for import with all endpoints pre-configured:
+
+**File:** `collections/Data_Controller_API.postman_collection.json`
+
+**To use:**
+1. Open Postman
+2. Click **Import** button
+3. Select the file `collections/Data_Controller_API.postman_collection.json`
+4. The collection will be imported with pre-configured requests and environment variables
+5. All requests include the required `Subscription-Key` header
+
+#### 📄 HTTP Request Files
+
+For developers using IntelliJ IDEA HTTP Client or VS Code REST Client extension, example HTTP request files are provided:
+
+- **`collections/api-charge-point-http-requests.http`** - Examples for Charge Point availability endpoint
+- **`collections/api-poll-http-requests.http`** - Examples for Pool search endpoint
+
+These files can be executed directly from your IDE to test the API endpoints.
+
 ### Authentication
 
 Both endpoints require a subscription key header:
