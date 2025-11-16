@@ -99,11 +99,24 @@ Subscription-Key: 1234ABCD
 
 ### Example Requests
 
-Example HTTP requests are available in:
-- `api-charge-point-http-requests.http` - Charge point endpoint examples
-- `api-poll-http-requests.http` - Pool search endpoint examples
+#### Postman Collection
 
-You can use these files with HTTP clients like IntelliJ's HTTP Client or REST Client extensions.
+A ready-to-use Postman collection is available for import:
+
+📦 **`collections/Data_Controller_API.postman_collection.json`**
+
+To use it:
+1. Open Postman
+2. Click **Import**
+3. Select the file `collections/Data_Controller_API.postman_collection.json`
+4. The collection will be imported with pre-configured requests and environment variables
+
+#### HTTP Files
+
+Example HTTP requests are also available in the `collections/` directory for use with IntelliJ IDEA HTTP Client or REST Client extensions:
+
+- **`collections/api-charge-point-http-requests.http`** - Charge point endpoint examples
+- **`collections/api-poll-http-requests.http`** - Pool search endpoint examples
 
 ### Swagger Documentation
 

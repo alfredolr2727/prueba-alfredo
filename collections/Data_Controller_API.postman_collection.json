@@ -1,0 +1,111 @@
+{
+	"info": {
+		"_postman_id": "4af872ff-1cda-47ae-a635-a500fe5caa33",
+		"name": "Data Controller API",
+		"description": "Collection for testing POI Data API endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "45395789",
+		"_collection_link": "https://alf-2315675.postman.co/workspace/Alf's-Workspace~9a5d9f5c-1657-4f77-8006-4e0586561c3f/collection/45395789-4af872ff-1cda-47ae-a635-a500fe5caa33?action=share&source=collection_link&creator=45395789"
+	},
+	"item": [
+		{
+			"name": "Pool Find",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Subscription-Key",
+						"value": "1234ABCD",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"dcsPoolIds\": [\n    \"POOL:001232cf-8608-3939-8e70-7e3beec16eec\",\n    \"POOL:0c6fd997-c271-3ac8-abd9-ebab55212eda\"\n\n  ],\n  \"filterCriteria\": {\n    \"authenticationMethods\": [\n      \"REMOTE\"\n    ]\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/pool-find",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pool-find"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Charge Points",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Subscription-Key",
+						"value": "1234ABCD",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"chargePointIds\": [\"CHARGE_POINT:3ad0a06c-8dae-3451-8acd-267460a9afee\", \"CHARGE_POINT:5bc6d7e8-9fa0-1b2c-3d4e-5f6a7b8c9d0e\", \"CHARGE_POINT:NO_EXISTS\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/availability/charge-points/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"availability",
+						"charge-points",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
