@@ -9,9 +9,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Data;
 
 @Entity
 @Table(name = "connector")
+@Data
 public class ConnectorEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,39 +28,4 @@ public class ConnectorEntity {
 
   @Column(name = "power_level")
   private Integer powerLevel;
-
-  // Constructors, getters y setters
-  public ConnectorEntity() {}
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public ChargePointEntity getChargePoint() {
-    return chargePoint;
-  }
-
-  public void setChargePoint(ChargePointEntity chargePoint) {
-    this.chargePoint = chargePoint;
-  }
-
-  public String getPlugType() {
-    return plugType;
-  }
-
-  public void setPlugType(String plugType) {
-    this.plugType = plugType;
-  }
-
-  public Integer getPowerLevel() {
-    return powerLevel;
-  }
-
-  public void setPowerLevel(Integer powerLevel) {
-    this.powerLevel = powerLevel;
-  }
 }

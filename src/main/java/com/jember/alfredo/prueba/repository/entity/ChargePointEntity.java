@@ -13,9 +13,11 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Data;
 
 @Entity
 @Table(name = "charge_point")
+@Data
 public class ChargePointEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,63 +41,4 @@ public class ChargePointEntity {
 
   @OneToMany(mappedBy = "chargePoint", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private List<ConnectorEntity> connectors = new ArrayList<>();
-
-  // Constructors, getters y setters
-  public ChargePointEntity() {}
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public ChargingStationEntity getChargingStation() {
-    return chargingStation;
-  }
-
-  public void setChargingStation(ChargingStationEntity chargingStation) {
-    this.chargingStation = chargingStation;
-  }
-
-  public String getDcsCpId() {
-    return dcsCpId;
-  }
-
-  public void setDcsCpId(String dcsCpId) {
-    this.dcsCpId = dcsCpId;
-  }
-
-  public String getIncomingCpId() {
-    return incomingCpId;
-  }
-
-  public void setIncomingCpId(String incomingCpId) {
-    this.incomingCpId = incomingCpId;
-  }
-
-  public Boolean getDynamicInfoAvailable() {
-    return dynamicInfoAvailable;
-  }
-
-  public void setDynamicInfoAvailable(Boolean dynamicInfoAvailable) {
-    this.dynamicInfoAvailable = dynamicInfoAvailable;
-  }
-
-  public Boolean getIsoNormedId() {
-    return isoNormedId;
-  }
-
-  public void setIsoNormedId(Boolean isoNormedId) {
-    this.isoNormedId = isoNormedId;
-  }
-
-  public List<ConnectorEntity> getConnectors() {
-    return connectors;
-  }
-
-  public void setConnectors(List<ConnectorEntity> connectors) {
-    this.connectors = connectors;
-  }
 }
