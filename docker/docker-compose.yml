@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   postgres:
     image: postgres:15
@@ -33,28 +31,28 @@ services:
       timeout: 5s
       retries: 5
 
-#  app:
-#    build:
-#      context: ..
-#      dockerfile: docker/Dockerfile
-#    container_name: spring-app
-#    restart: always
-#    depends_on:
-#      postgres:
-#        condition: service_healthy
-#      redis:
-#        condition: service_healthy
-#    environment:
-#      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mydb
-#      SPRING_DATASOURCE_USERNAME: myuser
-#      SPRING_DATASOURCE_PASSWORD: mypassword
-#      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-#
-#      SPRING_REDIS_HOST: redis
-#      SPRING_REDIS_PORT: 6379
-#
-#    ports:
-#      - "8080:8080"
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: spring-app
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mydb
+      SPRING_DATASOURCE_USERNAME: myuser
+      SPRING_DATASOURCE_PASSWORD: mypassword
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+
+    ports:
+      - "8080:8080"
 
 volumes:
   postgres_data:
