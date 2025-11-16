@@ -45,6 +45,6 @@ public class DataLoader implements CommandLineRunner {
           redisTemplate.opsForValue().set("chargepoint:" + cp.chargePointID(), cp);
         });
 
-    log.info("✓ Cargados {} charge points en Redis", chargePoints.size());
+    log.info("✓ Added {} charge points in Redis", chargePoints.size());
   }
 }
